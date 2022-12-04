@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTU</title>
+    <style>
+        body {
+            background-color: black;
+            color: lightgrey;
+        }
+
+        #dtu-div {
+            justify-content: center;
+            text-align: center;
+        }
+        #dtu-div label {
+            font-size: xx-large;
+        }
+        table th, td{
+            border: 1px solid grey;
+            padding: 8px;
+            text-align: left;
+        }
+        table {
+            margin: 10%;
+            border-collapse: collapse;
+        }
+        #event-table {
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="dtu-div">
+        <label for="DTU">Tid til uteksaminering!</label>
+        <h2 id="DTU"></h1>
+    </div>
+    <div id="event-div">
+        <table id="event-table">
+            <tr>
+                <th>Event</th>
+                <th>Tid til event</th>
+            </tr>
+        </table>
+    </div>
+</body>
+<script>
+    const second = 1000
+    const minute = 1000 * 60;
+    const hour = minute * 60;
+    const day = hour * 24;
+    const year = day * 365;
+
+    const events = {
+        "uteksaminering" : "June 24, 2025",
+        "juleferie" : "16 december, 2022",
+        "påskeferie" : "1 april, 2023",
+        "sommerferie" : "1 july 2023"
+    }
+
+    const timestring = (time) => {
+        let år = Math.floor(time / year);
+        time = time - (år * year);
+
+        let dager = Math.floor(time / day);
+        time = time - dager * day;
+
+        let timer = Math.floor(time / hour);
+        time = time - timer * hour;
+
+        let minutter = Math.floor(time / minute);
+        time = time - minutter * minute
+
+        let sekunder = Math.floor(time / second)
+
+        return `${år > 0 ? år : ""} ${år > 0 ? "år," : ""} ${dager} ${dager > 1 ? "dager" : "dag"}, ${timer} ${timer > 1 ? "timer" : "time"}, ${minutter} ${minutter > 1 ? "minutter" : "minutt"}, ${sekunder} ${sekunder > 1 ? "sekunder" : "sekund"}`;
+    }
+
+    setInterval(() => {
+        let now = new Date()
+        let DTU = new Date(events["uteksaminering"])
+
+        document.getElementById("DTU").innerText = `${timestring(DTU.getTime() - now.getTime())}`
+
+        const eventTable = document.getElementById("event-table");
+
+        let rowCount = eventTable.rows.length
+        for (let i = 1; i < rowCount; i++) {
+            eventTable.deleteRow(1)
+        }
+
+        for (const event of Object.keys(events)) {
+            if (event === "uteksaminering") {
+                continue;
+            }
+            let eventTime = new Date(events[event])
+            let row = document.createElement("tr");
+            eventTable.appendChild(row)
+            let nameNode = document.createElement("td")
+            let timeNode = document.createElement("td")
+            nameNode.innerText = event
+            timeNode.innerText = timestring(eventTime.getTime() - now.getTime())
+            row.appendChild(nameNode)
+            row.appendChild(timeNode)
+        }
+
+    }, 10)
+</script>
+</html>
